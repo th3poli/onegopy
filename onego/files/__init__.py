@@ -37,3 +37,4 @@ def writeCSV(path: str, rows: list[list[str]]):
         for row in rows: writer.writerow(row)
 
 def join(path: str, *paths: str): return os.path.join(path, *paths)
+def makedirs(path: str): os.makedirs(path, exist_ok=True)

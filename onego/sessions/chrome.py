@@ -5,7 +5,7 @@ from onego import files
 
 class SessionChrome(cloudscraper.CloudScraper):
 
-    def __init__(self, profile: str, chrome_version: int = 131, cookies_path: str = '.polinv-session-cookies', *args, **kwargs):
+    def __init__(self, profile: str, chrome_version: int = 131, cookies_path: str = '.onego-sessions-cookies', *args, **kwargs):
         self.profile = profile
         self.cookies_path = os.path.join(cookies_path, f'{self.profile}.json')
         self.chrome_version = chrome_version or 131

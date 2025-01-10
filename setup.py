@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 # with open('README.md', 'r', encoding='utf-8') as f:
 #     readme = f.read()
 
-VERSION = '1.1.4'
+VERSION = '1.1.5'
 
 setup(
     name='onego',

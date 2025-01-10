@@ -3,6 +3,15 @@ from datetime import datetime
 
 os.system("") #
 
+def remove_colors_from_str(text: str):
+    all_colors = [
+        "\033[0m" , "\033[1m", "\033[3m", "\033[4m" , "\033[30m\033[47m", "\033[31m", "\033[32m", "\033[33m", "\033[34m",
+        "\033[35m", "\033[36m", "\033[37m", "\033[90m", "\033[91m", "\033[92m", "\033[93m", "\033[94m", "\033[95m", "\033[96m",
+        "\033[97m", "\033[40m", "\033[41m", "\033[42m", "\033[43m", "\033[44m", "\033[45m", "\033[46m", "\033[47m"
+    ]
+    for c in all_colors: text = text.replace(c, '')
+    return text
+
 class colors:
 
     RESET = "\033[0m"
@@ -42,34 +51,35 @@ def _values_to_string(*values: object, sep: str = ' '): return sep.join([str(v) 
 
 class Logger:
 
-    def __init__(self, logs_path: str = '.polinv-logs') -> None:
+    def __init__(self, prefix: str = '', logs_path: str = '.logs') -> None:
+        self.prefix = f'({prefix})' if prefix else ''
         self.logs_path = logs_path
+        self.colors = colors()
 
     def save_today_log(self, text: str):
-        path = os.path.join(self.logs_path, 'today.log')
+        now_date = datetime.now().strftime("%d-%m-%Y")
+        path = os.path.join(self.logs_path, now_date)
+        os.makedirs(path, exist_ok=True)
+        path = os.path.join(path, 'logs.log')
         with open(path, 'a', encoding='utf-8') as file: file.write(text)
 
     def log(self, text: str, color: str = colors.RESET, save: bool = False):
         log_time = datetime.now().strftime("%H:%M:%S")
-        if save: self.save_today_log(log_time + ' > ' + text + '\n')
+        if save: self.save_today_log(log_time + ' > ' + remove_colors_from_str(text) + '\n')
         print(f'{color}{text}{colors.RESET}')
 
-    def error(self, text: str):
+    def __error(self, text: str):
         log_time = datetime.now().strftime("%H:%M:%S")
         self.save_today_log('(error) -> ' + log_time + ' > ' + text + '\n')
         print(f'{colors.RED}(error) -> {colors.LIGHT_RED}' + text + f'{colors.RESET}')
 
-    def info(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(INFO) {_values_to_string(*values, sep)}', colors.LIGHT_AQUA, save)
-    def success(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(INFO) {_values_to_string(*values, sep)}', colors.LIGHT_GREEN, save)
-    def primary(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(INFO) {_values_to_string(*values, sep)}', colors.LIGHT_PURPLE, save)
-    def warning(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(WARNING) {_values_to_string(*values, sep)}', colors.LIGHT_YELLOW, save)
-    def danger(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(WARNING) {_values_to_string(*values, sep)}', colors.LIGHT_RED, save)
+    def error(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(ERROR) {self.prefix} {_values_to_string(*values, sep)}', colors.LIGHT_RED, save)
 
-    def info_profile(self, profile: str, *values: object, sep: str = ' ', save: bool = False): self.info(f'({profile}) -> {_values_to_string(*values, sep)}', sep=sep, save=save)
-    def success_profile(self, profile: str, *values: object, sep: str = ' ', save: bool = False): self.success(f'({profile}) -> {_values_to_string(*values, sep)}', sep=sep, save=save)
-    def primary_profile(self, profile: str, *values: object, sep: str = ' ', save: bool = False): self.primary(f'({profile}) -> {_values_to_string(*values, sep)}', sep=sep, save=save)
-    def warning_profile(self, profile: str, *values: object, sep: str = ' ', save: bool = False): self.warning(f'({profile}) -> {_values_to_string(*values, sep)}', sep=sep, save=save)
-    def danger_profile(self, profile: str, *values: object, sep: str = ' ', save: bool = False): self.danger(f'({profile}) -> {_values_to_string(*values, sep)}', sep=sep, save=save)
+    def info(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(INFO) {self.prefix} {_values_to_string(*values, sep)}', colors.LIGHT_AQUA, save)
+    def success(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(INFO) {self.prefix} {_values_to_string(*values, sep)}', colors.LIGHT_GREEN, save)
+    def primary(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(INFO) {self.prefix} {_values_to_string(*values, sep)}', colors.LIGHT_PURPLE, save)
+    def warning(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(WARNING) {self.prefix} {_values_to_string(*values, sep)}', colors.LIGHT_YELLOW, save)
+    def danger(self, *values: object, sep: str = ' ', save: bool = False): self.log(f'(ERROR) {self.prefix} {_values_to_string(*values, sep)}', colors.LIGHT_RED, save)
 
 def save_today_log(text: str):
     path = os.path.join('.polinv-logs', 'today.log')
@@ -89,7 +99,7 @@ def info(*values: object, sep: str = ' ', save: bool = False): log(f'(INFO) {_va
 def success(*values: object, sep: str = ' ', save: bool = False): log(f'(INFO) {_values_to_string(*values, sep)}', colors.LIGHT_GREEN, save)
 def primary(*values: object, sep: str = ' ', save: bool = False): log(f'(INFO) {_values_to_string(*values, sep)}', colors.LIGHT_PURPLE, save)
 def warning(*values: object, sep: str = ' ', save: bool = False): log(f'(WARNING) {_values_to_string(*values, sep)}', colors.LIGHT_YELLOW, save)
-def danger(*values: object, sep: str = ' ', save: bool = False): log(f'(WARNING) {_values_to_string(*values, sep)}', colors.LIGHT_RED, save)
+def danger(*values: object, sep: str = ' ', save: bool = False): log(f'(ERROR) {_values_to_string(*values, sep)}', colors.LIGHT_RED, save)
 
 def info_profile(profile: str, *values: object, sep: str = ' ', save: bool = False): info(f'({profile}) -> {_values_to_string(*values, sep)}', sep=sep, save=save)
 def success_profile(profile: str, *values: object, sep: str = ' ', save: bool = False): success(f'({profile}) -> {_values_to_string(*values, sep)}', sep=sep, save=save)

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 # with open('README.md', 'r', encoding='utf-8') as f:
 #     readme = f.read()
 
-VERSION = '1.1.3'
+VERSION = '1.1.4'
 
 setup(
     name='onego',
@@ -20,7 +20,7 @@ setup(
     url='https://github.com/th3poli/onegopy',
     install_requires=[],
     extras_require={
-        'sessions': ['cloudscraper'],
+        'sessions': ['cloudscraper', 'beautifulsoup4'],
         'files': [],
         'logger': [],
         'utils': ['requests', 'beautifulsoup4'],

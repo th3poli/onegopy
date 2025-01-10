@@ -32,7 +32,9 @@ def start_thread_groups(threads: list[threading.Thread]):
 def join_thread_groups(threads: list[threading.Thread]):
     for t in threads: t.join()
 
-def parse(res: requests.Response): return BeautifulSoup(res.text, 'html.parser')
+def parse(res: requests.Response | str):
+    if type(res) == str: return BeautifulSoup(res, 'html.parser')
+    return BeautifulSoup(res.text, 'html.parser')
 
 def str_contains_any(text: str, items: list[str]):
     for e in items:
